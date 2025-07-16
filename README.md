@@ -13,6 +13,7 @@ This is the foundational template for building **AthleticAI**, an AI-powered spo
 **Framework:**
 
 * [`Next.js`](https://nextjs.org/) (v14+ App Router) — React framework with file-based routing and server functions
+* PNPM is the package manager! Not NPM
 
 **Language:**
 
