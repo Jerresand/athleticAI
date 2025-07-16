@@ -1,119 +1,166 @@
-# Next.js SaaS Starter
+Got it. Here's a more **explicit and bulletproof** version of the README with the **tech stack spelled out clearly** — so there’s no ambiguity when used with tools like Cursor agents, AI devs, or teammates:
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+---
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+# 🏋️ AthleticAI MVP – Next.js SaaS Starter
 
-## Features
+This is the foundational template for building **AthleticAI**, an AI-powered sports video analyzer. Users upload short videos (e.g. a golf swing, tennis forehand, or soccer shot), and the app extracts video frames, analyzes each frame using AI, and generates a visual summary showing key moments in the motion.
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+---
 
-## Tech Stack
+## 🔧 Tech Stack (Explicit)
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+**Framework:**
 
-## Getting Started
+* [`Next.js`](https://nextjs.org/) (v14+ App Router) — React framework with file-based routing and server functions
 
-```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
-pnpm install
-```
+**Language:**
 
-## Running Locally
+* Full-stack **TypeScript**
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+**Frontend:**
 
-```bash
-stripe login
-```
+* React (via Next.js)
+* Tailwind CSS (included via `shadcn/ui`)
+* UI components: [`shadcn/ui`](https://ui.shadcn.com/) — built on Radix + Tailwind
+* Client-side file upload: direct-to-cloud using [`@vercel/blob`](https://vercel.com/docs/storage/blob)
 
-Use the included setup script to create your `.env` file:
+**Backend:**
 
-```bash
-pnpm db:setup
-```
+* Node.js runtime (via Vercel Serverless Functions)
+* API routes and server actions via Next.js App Router
+* Video processing triggered from server functions (or delegated to external job runners)
 
-Run the database migrations and seed the database with a default user and team:
+**Authentication:**
 
-```bash
-pnpm db:migrate
-pnpm db:seed
-```
+* Email/password sign-in
+* Auth implemented via server actions and JWT tokens stored in HTTP-only cookies
+* Role-based access (Owner, Member)
 
-This will create the following user and team:
+**Database:**
 
-- User: `test@test.com`
-- Password: `admin123`
+* PostgreSQL (local via Docker, or hosted via Supabase)
+* Type-safe DB access using [`Drizzle ORM`](https://orm.drizzle.team/)
 
-You can also create new users through the `/sign-up` route.
+**Payments:**
 
-Finally, run the Next.js development server:
+* Stripe (Checkout session and Customer Portal integration)
+* Stripe Webhook handled via Next.js API route
 
-```bash
-pnpm dev
-```
+**Storage:**
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+* [`Vercel Blob`](https://vercel.com/docs/storage/blob) for temporary video upload (direct from browser)
+* Videos deleted automatically after processing
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+**AI/ML Processing (to be integrated):**
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
+* Frames extracted with `FFmpeg`
+* Frame-by-frame AI analysis using **cloud-hosted open-source vision models**, e.g.:
 
-## Testing Payments
+  * LLaVA / LLaMA 3.2 Vision (via [Together AI](https://www.together.ai/) or [Segmind](https://segmind.com/))
+  * Optionally, lightweight pose estimation (e.g. MoveNet via TensorFlow\.js or inference API)
 
-To test Stripe payments, use the following test card details:
+---
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+## 🧪 MVP Features
 
-## Going to Production
+* Upload short videos directly to cloud blob storage from the browser
+* Trigger server-side video processing workflow (e.g. via API route)
+* Extract frames using FFmpeg at fixed frame rate or based on motion/keyframes
+* Analyze frames using a vision-language model (e.g. generate pose labels or scene understanding)
+* Select key frames and output visual + text summary
+* Authenticated dashboard for users (gated by login and Stripe subscription)
+* Stripe billing for usage-based access or paid tiers
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+---
 
-### Set up a production Stripe webhook
+App Architecture (Only read if you are confused)
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
+graph TD
+    FurniBoss["🏠 FurniBoss"]
+    
+    %% App Directory Structure
+    FurniBoss --> App["📱 app/"]
+    App --> Dashboard["📊 (dashboard)/"]
+    App --> Login["🔐 (login)/"]
+    App --> API["🔌 api/"]
+    App --> AppFiles["📄 Files"]
+    
+    %% Dashboard Routes
+    Dashboard --> DashLayout["📋 layout.tsx"]
+    Dashboard --> DashPage["🏠 page.tsx"]
+    Dashboard --> DashboardSub["📊 dashboard/"]
+    Dashboard --> Pricing["💰 pricing/"]
+    Dashboard --> Terminal["💻 terminal.tsx"]
+    
+    DashboardSub --> Activity["📈 activity/"]
+    DashboardSub --> General["⚙️ general/"]
+    DashboardSub --> Security["🔒 security/"]
+    DashboardSub --> DashFiles["📄 layout.tsx<br/>page.tsx"]
+    
+    Activity --> ActFiles["📄 loading.tsx<br/>page.tsx"]
+    General --> GenPage["📄 page.tsx"]
+    Security --> SecPage["📄 page.tsx"]
+    
+    Pricing --> PriceFiles["📄 page.tsx<br/>submit-button.tsx"]
+    
+    %% Login Routes
+    Login --> LoginFiles["📄 actions.ts<br/>login.tsx"]
+    Login --> SignIn["✏️ sign-in/"]
+    Login --> SignUp["📝 sign-up/"]
+    
+    SignIn --> SignInPage["📄 page.tsx"]
+    SignUp --> SignUpPage["📄 page.tsx"]
+    
+    %% API Routes
+    API --> Stripe["💳 stripe/"]
+    API --> Team["👥 team/"]
+    API --> User["👤 user/"]
+    
+    Stripe --> Checkout["🛒 checkout/"]
+    Stripe --> Webhook["🔗 webhook/"]
+    Checkout --> CheckoutRoute["📄 route.ts"]
+    Webhook --> WebhookRoute["📄 route.ts"]
+    Team --> TeamRoute["📄 route.ts"]
+    User --> UserRoute["📄 route.ts"]
+    
+    %% App Files
+    AppFiles --> AppCore["📄 layout.tsx<br/>not-found.tsx<br/>globals.css<br/>favicon.ico"]
+    
+    %% Components
+    FurniBoss --> Components["🧩 components/"]
+    Components --> UI["🎨 ui/"]
+    UI --> UIFiles["📄 avatar.tsx<br/>button.tsx<br/>card.tsx<br/>dropdown-menu.tsx<br/>input.tsx<br/>label.tsx<br/>radio-group.tsx"]
+    
+    %% Lib Directory
+    FurniBoss --> Lib["📚 lib/"]
+    Lib --> Auth["🔐 auth/"]
+    Lib --> DB["🗄️ db/"]
+    Lib --> Payments["💳 payments/"]
+    Lib --> Utils["🛠️ utils.ts"]
+    
+    Auth --> AuthFiles["📄 middleware.ts<br/>session.ts"]
+    
+    DB --> DBFiles["📄 drizzle.ts<br/>queries.ts<br/>schema.ts<br/>seed.ts<br/>setup.ts"]
+    DB --> Migrations["📁 migrations/"]
+    Migrations --> MigFiles["📄 0000_soft_the_anarchist.sql"]
+    Migrations --> Meta["📁 meta/"]
+    Meta --> MetaFiles["📄 _journal.json<br/>0000_snapshot.json"]
+    
+    Payments --> PayFiles["📄 actions.ts<br/>stripe.ts"]
+    
+    %% Root Files
+    FurniBoss --> RootFiles["📄 package.json<br/>next.config.ts<br/>tsconfig.json<br/>middleware.ts<br/>drizzle.config.ts<br/>docker-compose.yml<br/>pnpm-lock.yaml<br/>postcss.config.mjs<br/>components.json<br/>next-env.d.ts<br/>README.md<br/>LICENSE"]
+    
+    %% Supabase
+    FurniBoss --> Supabase["☁️ supabase/"]
 
-### Deploy to Vercel
-
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
-
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com
-- https://turbostarter.dev
+    %% Styling
+    classDef folder fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef file fill:#f3e5f5,stroke:#4a148c,stroke-width:1px
+    classDef api fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef auth fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class FurniBoss,App,Dashboard,Login,API,Components,Lib,Supabase folder
+    class Auth,Payments auth
+    class API,Stripe,Team,User,Checkout,Webhook api

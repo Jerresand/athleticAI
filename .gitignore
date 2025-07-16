@@ -64,3 +64,5 @@ $RECYCLE.BIN/
 
 # Linux trash folder
 .Trash-*
+.vercel
+.env*.local
